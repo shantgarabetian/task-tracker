@@ -13,10 +13,16 @@
       "reminder": true
     },
     {
-      "text": "fghdfgdfg",
-      "day": "dfgdfgdg",
-      "reminder": false,
-      "id": 4
+      "id": 3,
+      "text": "Dinner Appointment",
+      "day": "Jan 9th at 8:00pm",
+      "reminder": false
+    },
+    {
+      "id": 4,
+      "text": "Lunch Appointment",
+      "day": "Jan 10th at 2:00pm",
+      "reminder": false
     }
   ]
 }
