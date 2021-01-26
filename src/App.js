@@ -4,61 +4,66 @@ import Tasks from "./components/Tasks";
 import AddTask from "./components/AddTask";
 import Footer from "./components/Footer";
 import About from "./components/About";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 
 const App = () => {
-  const [tasks, setTasks] = useState([]);
-  const [addTaskFlag, setaddTaskFlag] = useState(false);
-
-  // using fetch to get the data from rest api
-  useEffect(() => {
-    const getTasks = async () => {
-      const taskfromserver = await fetchTasks();
-      setTasks(taskfromserver);
-    };
-    getTasks();
-  }, []);
-  // fetch Tasks
-  const fetchTasks = async () => {
-    const response = await fetch("http://localhost:5000/tasks");
-    const data = await response.json();
-    return data;
-  };
-  //Add Task
-  const addTask = async (task) => {
-    const response = await fetch(`http://localhost:5000/tasks/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+  const [tasks, setTasks] = useState(
+    [
+      {
+        "id": 1,
+        "text": "Doctor Appointment",
+        "day": "Jan 7th at 1:00pm",
+        "reminder": true
       },
-      body: JSON.stringify(task),
-    });
-    const data = await response.json();
-    setTasks([...tasks, data]);
+      {
+        "id": 2,
+        "text": "Office Appointment",
+        "day": "Jan 8th at 2:00pm",
+        "reminder": true
+      },
+      {
+        "id": 3,
+        "text": "Dinner Appointment",
+        "day": "Jan 9th at 8:00pm",
+        "reminder": false
+      },
+      {
+        "id": 4,
+        "text": "Lunch Appointment",
+        "day": "Jan 10th at 2:00pm",
+        "reminder": false
+      }
+    ]
+  );
+  const [addTaskFlag, setaddTaskFlag] = useState(false);
+    const generateId = () => {
+      //copy the ids of the array 
+      const ids = tasks.map(task => task.id)
+      // get the max id
+      const maxId = Math.max(...ids)
+      //add 1 to the max id generated
+      const newId = maxId + 1
+      //return the 
+      return newId
+    }
+
+  //Add Task
+  const addTask = (task) => {
+    const taskWithId = {...task, id: generateId()}
+    setTasks([...tasks, taskWithId]);
   };
   // delete task func
-  const deleteTask = async (id) => {
-    await fetch(`http://localhost:5000/tasks/${id}`, { method: "DELETE" });
-
+  const deleteTask = (id) => {
     setTasks(tasks.filter((task) => task.id !== id));
   };
   //Toggle reminder
 
-  const toggleReminder = async (id) => {
+  const toggleReminder = (id) => {
     let task = tasks.find((task) => task.id === id);
     const updatedTask = { ...task, reminder: !task.reminder };
 
-    const response = await fetch(`http://localhost:5000/tasks/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedTask),
-    });
-    const data = await response.json();
-
-    setTasks(tasks.map((task) => (task.id === id ? data : task)));
+    setTasks(tasks.map((task) => (task.id === id ? updatedTask : task)));
   };
   const toggleAddTask = () => {
     setaddTaskFlag(!addTaskFlag);
@@ -66,7 +71,7 @@ const App = () => {
 
 
   return (
-    <Router>
+    <Router basename="/task-tracker">
       <div className='container'>
         <Header
           onClick={toggleAddTask}
